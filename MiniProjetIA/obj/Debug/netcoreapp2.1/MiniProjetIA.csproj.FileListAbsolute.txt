@@ -1,0 +1,11 @@
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\bin\Debug\netcoreapp2.1\MiniProjetIA.deps.json
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\bin\Debug\netcoreapp2.1\MiniProjetIA.runtimeconfig.json
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\bin\Debug\netcoreapp2.1\MiniProjetIA.runtimeconfig.dev.json
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\bin\Debug\netcoreapp2.1\MiniProjetIA.dll
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\bin\Debug\netcoreapp2.1\MiniProjetIA.pdb
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\obj\Debug\netcoreapp2.1\MiniProjetIA.csprojAssemblyReference.cache
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\obj\Debug\netcoreapp2.1\MiniProjetIA.csproj.CoreCompileInputs.cache
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\obj\Debug\netcoreapp2.1\MiniProjetIA.AssemblyInfoInputs.cache
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\obj\Debug\netcoreapp2.1\MiniProjetIA.AssemblyInfo.cs
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\obj\Debug\netcoreapp2.1\MiniProjetIA.dll
+C:\Users\herizo\source\repos\MiniProjetIA\MiniProjetIA\obj\Debug\netcoreapp2.1\MiniProjetIA.pdb
