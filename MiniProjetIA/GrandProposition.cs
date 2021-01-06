@@ -283,58 +283,73 @@ namespace MiniProjetIA
 
         public Proposition ModusPonens(Proposition p)
         {
-            //if(p.GetType() == propositionGauche.GetType() && logique.nom == "-")
-            //{
-                //Console.WriteLine("Ok");
-                if (propositionGauche.Parcourir() == p.Parcourir())
+            if (propositionGauche.Parcourir() == p.Parcourir())
+            {
+                if (propositionDroite.GetType() == this.GetType())
                 {
-                    if (propositionDroite.GetType() == this.GetType())
+                    propositionGauche = ((GrandProposition)propositionDroite).propositionGauche;
+                    logique = ((GrandProposition)propositionDroite).logique;
+                    propositionDroite = ((GrandProposition)propositionDroite).propositionDroite;
+                    propositionGauche.InitialisationPropositionPrecedente(this);
+                    propositionDroite.InitialisationPropositionPrecedente(this);
+                }
+                else
+                {
+                    if(precedentProposition != null)
                     {
-                        propositionGauche = ((GrandProposition)propositionDroite).propositionGauche;
-                        logique = ((GrandProposition)propositionDroite).logique;
-                        propositionDroite = ((GrandProposition)propositionDroite).propositionDroite;
-                        propositionGauche.InitialisationPropositionPrecedente(this);
-                        propositionDroite.InitialisationPropositionPrecedente(this);
+                        if (((GrandProposition)precedentProposition).propositionDroite == this)
+                        {
+                            ((GrandProposition)precedentProposition).InitialisationPropositionDroite(propositionDroite);
+                        }
+                        else if (((GrandProposition)precedentProposition).propositionGauche == this)
+                        {
+                            ((GrandProposition)precedentProposition).InitialisationPropositionGauche(propositionDroite);
+                        }
+                        propositionDroite.InitialisationPropositionPrecedente(precedentProposition);
+                        return (Proposition)propositionDroite;
                     }
                     else
                     {
-                        Console.WriteLine("Chemin 2");
-                        if(((GrandProposition)precedentProposition).propositionDroite == this)
-                        {
-                            propositionGauche.InitialisationPropositionPrecedente(precedentProposition);
-                            return (Proposition)propositionDroite;
-                        }
+                        return precedentProposition;
                     }
                 }
-            //}
+            }
             return (GrandProposition)this;
         }
 
         public Proposition ModusTollens(Proposition p)
         {
-            //if (p.GetType() == propositionDroite.GetType() && logique.nom == "-")
-            //{
-                //p.Negation();
-                //Console.WriteLine(propositionDroite.Parcourir() + "8" + p.Parcourir());
-                if (propositionDroite.Parcourir() == p.Parcourir())
+            if (propositionDroite.Parcourir() == p.Parcourir())
+            {
+                if (propositionGauche.GetType() == this.GetType())
                 {
-                    if (propositionGauche.GetType() == this.GetType())
+                    logique = ((GrandProposition)propositionGauche).logique;
+                    propositionDroite = ((GrandProposition)propositionGauche).propositionDroite;
+                    propositionGauche = ((GrandProposition)propositionGauche).propositionGauche;
+                    propositionGauche.InitialisationPropositionPrecedente(precedentProposition);
+                    propositionDroite.InitialisationPropositionPrecedente(precedentProposition);
+                }
+                else
+                {
+                    if (precedentProposition != null)
                     {
-                        //((GrandProposition)propositionGauche).Negation();
-                        logique = ((GrandProposition)propositionGauche).logique;
-                        propositionDroite = ((GrandProposition)propositionGauche).propositionDroite;
-                        propositionGauche = ((GrandProposition)propositionGauche).propositionGauche;
-                        propositionGauche.InitialisationPropositionPrecedente(precedentProposition);
-                        propositionDroite.InitialisationPropositionPrecedente(precedentProposition);
-                    }
-                    else
-                    {
-                        //propositionGauche.Negation();
+                        if (((GrandProposition)precedentProposition).propositionDroite == this)
+                        {
+                            ((GrandProposition)precedentProposition).InitialisationPropositionDroite(propositionGauche);
+                        }
+                        else if (((GrandProposition)precedentProposition).propositionGauche == this)
+                        {
+                            ((GrandProposition)precedentProposition).InitialisationPropositionGauche(propositionGauche);
+                        }
                         propositionGauche.InitialisationPropositionPrecedente(precedentProposition);
                         return (Proposition)propositionGauche;
                     }
+                    else
+                    {
+                        return precedentProposition;
+                    }
                 }
-            //}
+            }
             return (GrandProposition)this;
         }
 
