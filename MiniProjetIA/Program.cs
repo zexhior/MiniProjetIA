@@ -20,21 +20,19 @@ namespace MiniProjetIA
             {
                 Console.WriteLine("Saisir hypothese numero " + (i+1));
                 this.tabhypothese[i] = Console.ReadLine();
-                Proposition hypothese = new GrandProposition("R","X",true);
+                Proposition hypothese = new GrandProposition("R",true);
                 traitementHypothese(this.tabhypothese[i], 0,hypothese);
                 if (((GrandProposition)hypothese).propositionDroite == null)
                     hypothese = new Proposition(((GrandProposition)hypothese).propositionGauche.nom,
-                        ((GrandProposition)hypothese).propositionGauche.valeur,
                         ((GrandProposition)hypothese).isTrue);
                 this.hypotheses.Add(hypothese);
             }
             Console.WriteLine("Saisir la conclusion : ");
             this.conclusion = Console.ReadLine();
-            grandPropositionConclusion = new GrandProposition("R", "X", true);
+            grandPropositionConclusion = new GrandProposition("R", true);
             traitementHypothese(this.conclusion, 0,grandPropositionConclusion);
             if (((GrandProposition)grandPropositionConclusion).propositionDroite == null)
                 grandPropositionConclusion = new Proposition(((GrandProposition)grandPropositionConclusion).propositionGauche.nom,
-                        ((GrandProposition)grandPropositionConclusion).propositionGauche.valeur,
                         ((GrandProposition)grandPropositionConclusion).isTrue);
         }
 
@@ -48,7 +46,7 @@ namespace MiniProjetIA
                     prop += hypothese[i];
                     prop += hypothese[i + 1];
                     //Console.WriteLine(prop);
-                    Proposition p = new Proposition(prop, "X", true, ref grandProposition);
+                    Proposition p = new Proposition(prop, true, ref grandProposition);
                     if (i > 0 && (hypothese[i - 1] == '&' || hypothese[i - 1] == '|' || hypothese[i - 1] == '-'))
                     {
                         ((GrandProposition)grandProposition).InitialisationPropositionDroite(p);
@@ -67,7 +65,7 @@ namespace MiniProjetIA
                     prop += hypothese[i + 1];
                     prop += hypothese[i + 2];
                     //Console.WriteLine(prop);
-                    Proposition p = new Proposition(prop, "X", false, ref grandProposition);
+                    Proposition p = new Proposition(prop, false, ref grandProposition);
                     if (i > 0 && (hypothese[i - 1] == '&' || hypothese[i - 1] == '|' || hypothese[i - 1] == '-'))
                     {
                         ((GrandProposition)grandProposition).InitialisationPropositionDroite(p);
@@ -85,7 +83,7 @@ namespace MiniProjetIA
                     //Console.WriteLine("Sous proposition");
                     string nom = "R";
                     nom += i;
-                    GrandProposition grandPropositionSuivant = new GrandProposition(nom,"X", true, ref grandProposition);
+                    GrandProposition grandPropositionSuivant = new GrandProposition(nom, true, ref grandProposition);
                     int iter = i;
                     i++;
                     i = traitementHypothese(hypothese, i, grandPropositionSuivant);
@@ -142,7 +140,9 @@ namespace MiniProjetIA
             List<Proposition> liste = new List<Proposition>();
             if (proposition.Parcourir().Length>3 && ((GrandProposition)proposition).logique.nom == "&"){
                 Console.WriteLine("teste");
+                (((GrandProposition)proposition).propositionGauche).InitialisationPropositionPrecedente(null);
                 liste.Add(((GrandProposition)proposition).propositionGauche);
+                (((GrandProposition)proposition).propositionDroite).InitialisationPropositionPrecedente(null);
                 liste.Add(((GrandProposition)proposition).propositionDroite);
             }
             return liste;
@@ -195,14 +195,6 @@ namespace MiniProjetIA
             return TesteSiFaux(hypotheses);
         }
 
-        public void SuppressionParPrincipeDeRobinson(List<Proposition> liste, int iteration1, int iteration2)
-        {
-            if(TesteSiFaux(liste) && iteration1 < liste.Capacity-1)
-            {
-                
-            }
-        }
-
         public void PrincipeDeRobinson()
         {
             bool test = ModificationPrincipeDeRobinson();
@@ -212,66 +204,85 @@ namespace MiniProjetIA
             }
         }
 
-        public static void Transformation(List<Proposition> l, int iteration, int iteration2)
+        public void Transformation(List<Proposition> l, int iteration, int iteration2)
         {
-            List<Proposition> liste = new List<Proposition>();
-            liste.AddRange(l);
-            Proposition p;
-            if(l[iteration2].Parcourir().Length > 3)
+            if (TesteSiFaux(l) && iteration < l.Capacity - 1)
             {
-                p = new Proposition((((GrandProposition)l[iteration2]).listeProposition[iteration].Contains("/")) ?
-                    ((GrandProposition)l[iteration2]).listeProposition[iteration].Replace("/", "") :
-                    ((GrandProposition)l[iteration2]).listeProposition[iteration],
-                    "X", (((GrandProposition)l[iteration2]).listeProposition[iteration].Contains("/")) ? false : true);
+                List<Proposition> liste = new List<Proposition>();
+                liste.AddRange(l);
+                Proposition p;
+                if (l[iteration2].Parcourir().Length > 3)
+                {
+                    p = new Proposition((((GrandProposition)l[iteration2]).listeProposition[iteration].Contains("/")) ?
+                        ((GrandProposition)l[iteration2]).listeProposition[iteration].Replace("/", "") :
+                        ((GrandProposition)l[iteration2]).listeProposition[iteration],
+                        (((GrandProposition)l[iteration2]).listeProposition[iteration].Contains("/")) ? false : true);
 
-            }
-            else
-            {
-                p = new Proposition(l[iteration2].nom, l[iteration2].valeur, l[iteration2].isTrue);
-            }
-            p.Negation();
-            foreach (var element in liste)
-            {
-                if(l[iteration2] != element)
-                {
-                    int i = l.IndexOf(element);
-                    Proposition prop = Compilateur.Parcourir(null, l[i], p);
-                    if (prop != null)
-                    {
-                        l[i] = prop;
-                        p.Negation();
-                        prop = Compilateur.Parcourir(null, l[iteration], p);
-                        l[iteration] = prop;
-                        if(l[iteration].Parcourir().Length > 3)
-                            ((GrandProposition)l[iteration]).InitialiserLaListeDesPropositions();
-                    }
-                    if (l[i].Parcourir().Length > 3)
-                        ((GrandProposition)l[i]).InitialiserLaListeDesPropositions();
                 }
-            }
-            if(liste == l)
-            {
-                iteration++;
-                if(l[iteration2].Parcourir().Length > 3)
+                else
                 {
-                    if (iteration > ((GrandProposition)l[iteration2]).listeProposition.Capacity)
+                    p = new Proposition(l[iteration2].nom, l[iteration2].isTrue);
+                }
+                p.Negation();
+                foreach (var element in liste)
+                {
+                    if (l[iteration2] != element)
+                    {
+                        int i = l.IndexOf(element);
+                        bool teste = false;
+                        Proposition prop = Compilateur.Parcourir(null, l[i], p, ref teste);
+                        if (prop != null)
+                        {
+                            Console.WriteLine("teste");
+                            l[i] = prop;
+                            p.Negation();
+                            prop = Compilateur.Parcourir(null, l[iteration], p, ref teste);
+                            if (prop != null)
+                                l[iteration] = prop;
+                            if (l[iteration].Parcourir().Length > 3)
+                                ((GrandProposition)l[iteration]).InitialiserLaListeDesPropositions();
+                        }
+                        else
+                        {
+                            if (teste)
+                            {
+                                p.Negation();
+                                prop = Compilateur.Parcourir(null, l[iteration], p, ref teste);
+                                if (prop != null)
+                                    l[iteration] = prop;
+                                if (l[iteration].Parcourir().Length > 3)
+                                    ((GrandProposition)l[iteration]).InitialiserLaListeDesPropositions();
+                            }
+                            Console.WriteLine("vide");
+                        }
+                        if (l[i].Parcourir().Length > 3)
+                            ((GrandProposition)l[i]).InitialiserLaListeDesPropositions();
+                    }
+                }
+                if (liste == l)
+                {
+                    iteration++;
+                    if (l[iteration2].Parcourir().Length > 3)
+                    {
+                        if (iteration > ((GrandProposition)l[iteration2]).listeProposition.Capacity)
+                        {
+                            iteration2++;
+                        }
+                    }
+                    else
                     {
                         iteration2++;
                     }
                 }
                 else
                 {
-                    iteration2++;
+                    iteration = 0;
                 }
+                //Transformation(l, iteration, iteration2);
             }
-            else
-            {
-                iteration = 0;
-            }
-            //Transformation(l, iteration, iteration2);
         }
 
-        public static Proposition Parcourir(Proposition gp,Proposition p, Proposition literal)
+        public static Proposition Parcourir(Proposition gp,Proposition p, Proposition literal,ref bool teste)
         {
             if(p.Parcourir() == literal.Parcourir())
             {
@@ -285,17 +296,21 @@ namespace MiniProjetIA
                     gp = ((GrandProposition)gp).ModusTollens(literal);
                     //Console.WriteLine(gp.Parcourir());
                 }
-                return gp;
+                teste = true;
+                if(gp != null)
+                    return gp.RetourVersLaRacine();
+                else
+                    return null;
             }
             else
             {
                 if(p.Parcourir().Length > 3)
                 {
-                    Proposition prop = Parcourir(p, ((GrandProposition)p).propositionGauche, literal);
+                    Proposition prop = Parcourir(p, ((GrandProposition)p).propositionGauche, literal, ref teste);
                     if (prop == null)
                     {
                         if (p.Parcourir().Length > 3)
-                            return Parcourir(p, ((GrandProposition)p).propositionDroite, literal);
+                            return Parcourir(p, ((GrandProposition)p).propositionDroite, literal, ref teste);
                     }
                     else
                     {
@@ -342,13 +357,14 @@ namespace MiniProjetIA
         static void SimpleEssaiDeLoiEtDeValeurDeProposition()
         {
             string h = "(p2|p3)|/p1";
-            Proposition hypothese = new GrandProposition("R0", "X", true);
+            Proposition hypothese = new GrandProposition("R0", true);
             int iteration = 0;
             Compilateur.traitementHypothese(h, iteration,(GrandProposition)hypothese);
             //string conclusion = "(p1&p3)-p2";
             //GrandProposition hypotheseConclusion = new GrandProposition("R0", "X", true);
-            Proposition p = new Proposition("p1","0",false);
-            hypothese = Compilateur.Parcourir(null, hypothese, p);
+            Proposition p = new Proposition("p1", false);
+            bool teste = false;
+            hypothese = Compilateur.Parcourir(null, hypothese, p, ref teste);
             //Compilateur.traitementHypothese(conclusion, 0, hypotheseConclusion);
             //hypothese = ((GrandProposition)hypothese).Syllogisme(hypotheseConclusion);
             hypothese.Affichage();
